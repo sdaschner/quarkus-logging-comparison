@@ -1,0 +1,3 @@
+= Quarkus Logging Comparison
+
+https://blog.sebastian-daschner.com/entries/the-case-against-logging
