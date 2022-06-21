@@ -1,3 +1,9 @@
 = Quarkus Logging Comparison
 
-https://blog.sebastian-daschner.com/entries/the-case-against-logging
+Comparison of different ways to implement plain-text audit logging in a Quarkus application:
+
+
+For a full explanation have a look at these two articles:
+
+- https://blog.sebastian-daschner.com/entries/the-case-against-logging[The Case Against Logging^]
+- TODO
