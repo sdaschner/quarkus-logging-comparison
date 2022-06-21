@@ -1,5 +1,4 @@
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
@@ -7,14 +6,11 @@ import javax.ws.rs.Path;
 @Path("hello")
 public class HelloResource {
 
-    @Inject
-    Logger logger;
-
     @GET
     public String hello() {
         int counter = 0;
         for (; counter < 1_000; counter++) {
-            logger.log("invoked /hello: " + counter);
+            // ... I know this doesn't make much sense :)
         }
         return String.valueOf(counter);
     }

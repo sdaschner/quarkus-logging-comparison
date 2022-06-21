@@ -1,5 +1,9 @@
+package com.sebastian_daschner.logging;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
@@ -7,14 +11,13 @@ import javax.ws.rs.Path;
 @Path("hello")
 public class HelloResource {
 
-    @Inject
-    Logger logger;
+    private static final Logger logger = LoggerFactory.getLogger(HelloResource.class);
 
     @GET
     public String hello() {
         int counter = 0;
         for (; counter < 1_000; counter++) {
-            logger.log("invoked /hello: " + counter);
+            logger.info("invoked /hello: {}", counter);
         }
         return String.valueOf(counter);
     }

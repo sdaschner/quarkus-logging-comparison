@@ -11,14 +11,15 @@ import javax.ws.rs.Path;
 @Path("hello")
 public class HelloResource {
 
-    private static Logger logger = LogManager.getLogger(HelloResource.class);
+    private static final Logger logger = LogManager.getLogger(HelloResource.class);
 
     @GET
     public String hello() {
-        for (int i = 0; i < 1_000; i++) {
-            logger.info("invoked /hello: {}", i);
+        int counter = 0;
+        for (; counter < 1_000; counter++) {
+            logger.info("invoked /hello: {}", counter);
         }
-        return "Hello world";
+        return String.valueOf(counter);
     }
 
 }

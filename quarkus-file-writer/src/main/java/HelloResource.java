@@ -12,10 +12,11 @@ public class HelloResource {
 
     @GET
     public String hello() {
-        for (int i = 0; i < 1_000; i++) {
-            logger.log("invoked /hello: ", String.valueOf(i));
+        int counter = 0;
+        for (; counter < 1_000; counter++) {
+            logger.log("invoked /hello: ", String.valueOf(counter));
         }
-        return "Hello world";
+        return String.valueOf(counter);
     }
 
 }

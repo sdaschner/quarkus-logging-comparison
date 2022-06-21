@@ -39,9 +39,8 @@ public class Logger {
     @Lock
     public void log(String... parts) {
         try {
-            for (String part : parts) {
+            for (String part : parts)
                 writer.append(part);
-            }
             writer.newLine();
         } catch (IOException e) {
             throw new UncheckedIOException(e);

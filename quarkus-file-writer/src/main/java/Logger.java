@@ -32,9 +32,8 @@ public class Logger {
 
     @Lock
     public void log(String... parts) {
-        for (String part : parts) {
+        for (String part : parts)
             writer.print(part);
-        }
         writer.println();
     }
 
