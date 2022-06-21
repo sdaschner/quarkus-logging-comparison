@@ -2,6 +2,14 @@
 
 Comparison of different ways to implement plain-text audit logging in a Quarkus application:
 
+- StdOut
+- File Writer
+- Buffered Writer
+- JBoss Logging
+- JDK 9+ System.Logger
+- Log4j2
+- Log4j2 Async
+- Logback
 
 For a full explanation have a look at these two articles:
 
