@@ -14,4 +14,4 @@ Comparison of different ways to implement plain-text audit logging in a Quarkus 
 For a full explanation have a look at these two articles:
 
 - https://blog.sebastian-daschner.com/entries/the-case-against-logging[The Case Against Logging^]
-- TODO
+- https://blog.sebastian-daschner.com/entries/logging-performance-comparison[Logging Performance Comparison^]
