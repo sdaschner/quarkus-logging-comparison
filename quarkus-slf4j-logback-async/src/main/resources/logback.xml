@@ -3,7 +3,7 @@
 
     <appender name="FILE" class="ch.qos.logback.core.FileAppender">
         <file>/tmp/quarkus-logback.log</file>
-        <append>false</append>
+        <append>true</append>
         <immediateFlush>false</immediateFlush>
         <encoder>
             <Pattern>%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n</Pattern>
@@ -14,11 +14,6 @@
         <queue-size>8192</queue-size>
         <discardingThreshold>0</discardingThreshold>
         <appender-ref ref="FILE" />
-    </appender>
-
-    <appender name="LLE" class="net.logstash.logback.appender.LoggingEventAsyncDisruptorAppender">
-        <appender-ref ref="FILE" />
-        <appendTimeout>-1</appendTimeout>
     </appender>
 
     <logger name="com.sebastian_daschner" level="info" additivity="false">
