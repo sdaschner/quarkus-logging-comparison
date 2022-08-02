@@ -14,7 +14,6 @@ public class HelloResource {
     public String hello() {
         int counter = 0;
         for (; counter < 1_000; counter++) {
-//            logger.log(Logger.Event.hello(counter));
             logger.log(Logger.Context.HELLO_METHOD, counter);
         }
         return String.valueOf(counter);

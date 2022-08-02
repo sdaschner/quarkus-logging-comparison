@@ -22,26 +22,30 @@ public class Logger {
         queue = SingleChronicleQueueBuilder.fieldlessBinary(basePath).build();
     }
 
-//    public void log(Event event) {
     public void log(Context context, int count) {
         ExcerptAppender appender = queue.acquireAppender();
-//        appender.writeDocument(w -> w
-//                .getValueOut().uint16(event.context.ordinal())
-//                .getValueOut().uint32(event.count)
-//        );
+        appender.writeDocument(w -> w
+                .getValueOut().uint16(context.ordinal())
+                .getValueOut().uint32(count)
+        );
 
-        appender.writeBytes(w -> w.writeUnsignedShort(context.ordinal())
-                .writeUnsignedInt(count));
+//        appender.writeBytes(w -> w.writeUnsignedShort(context.ordinal())
+//                .writeUnsignedInt(count));
     }
 
     public String dump() {
         StringBuilder builder = new StringBuilder();
         ExcerptTailer tailer = queue.createTailer();
-        while (tailer.readBytes(in -> builder
-                .append(Context.values()[in.readUnsignedShort()].name())
+        while (tailer.readDocument(r -> builder
+                .append(Context.values()[r.read().uint16()].name())
                 .append(':')
-                .append(in.readUnsignedInt())
-                .append('\n')));
+                .append(r.read().int32())
+                .append('\n'))) ;
+//        while (tailer.readBytes(in -> builder
+//                .append(Context.values()[in.readUnsignedShort()].name())
+//                .append(':')
+//                .append(in.readUnsignedInt())
+//                .append('\n')));
 
         return builder.toString();
     }
@@ -49,21 +53,6 @@ public class Logger {
     @PreDestroy
     void close() {
         queue.close();
-    }
-
-    public static class Event {
-
-        public final Context context;
-        public final int count;
-
-        public Event(Context context, int count) {
-            this.context = context;
-            this.count = count;
-        }
-
-        public static Event hello(int count) {
-            return new Event(Context.HELLO_METHOD, count);
-        }
     }
 
     public enum Context {

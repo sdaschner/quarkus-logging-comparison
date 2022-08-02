@@ -22,17 +22,21 @@ public class Logger {
     void init() throws IOException {
         path = Files.createTempFile("quarkus-log-", ".log");
         channel = FileChannel.open(path, StandardOpenOption.APPEND);
-        bb = ByteBuffer.allocate(6);
+        bb = ByteBuffer.allocate(6 * 4096);
+        bb.clear();
     }
 
     @Lock
     public void log(Context context, int count) {
         try {
-            bb.clear();
             bb.putShort((short) context.ordinal());
             bb.putInt(count);
-            bb.flip();
-            channel.write(bb);
+
+            if (!bb.hasRemaining()) {
+                bb.flip();
+                channel.write(bb);
+                bb.clear();
+            }
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
@@ -43,29 +47,7 @@ public class Logger {
         channel.close();
     }
 
-    public String dump() {
-        StringBuilder builder = new StringBuilder();
-
-        try {
-            byte[] bytes = Files.readAllBytes(path);
-            ByteBuffer buffer = ByteBuffer.wrap(bytes);
-
-            while (buffer.hasRemaining()) {
-                builder
-                        .append(Context.values()[buffer.getShort()].name())
-                        .append(':')
-                        .append(buffer.getInt())
-                        .append('\n');
-            }
-
-            return builder.toString();
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
-    }
-
     public enum Context {
-        MAIN, TEST, HELLO_METHOD, GOODBYE_METHOD;
+        MAIN, TEST, HELLO_METHOD, GOODBYE_METHOD
     }
-
 }

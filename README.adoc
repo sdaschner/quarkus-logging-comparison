@@ -1,17 +1,11 @@
-= Quarkus Logging Comparison
+= Quarkus Logging Comparison (binary version)
 
-Comparison of different ways to implement plain-text audit logging in a Quarkus application:
+Comparison of different ways to implement binary audit logging in a Quarkus application:
 
-- StdOut
-- File Writer
-- Buffered Writer
-- JBoss Logging
-- JDK 9+ System.Logger
-- Log4j2
-- Log4j2 Async
-- Logback
+- Binary File Writer
+- Binary Buffered File Writer
+- LMAX Disruptor
+- LMAX Disruptor With File Buffer
+- Chronicle Queue
 
-For a full explanation have a look at these two articles:
-
-- https://blog.sebastian-daschner.com/entries/the-case-against-logging[The Case Against Logging^]
-- TODO
+The text-based pendant can be found https://github.com/sdaschner/quarkus-logging-comparison[here^].

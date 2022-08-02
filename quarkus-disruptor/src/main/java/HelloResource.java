@@ -19,10 +19,4 @@ public class HelloResource {
         return String.valueOf(counter);
     }
 
-    @GET
-    @Path("dump")
-    public String dump() {
-        return logger.dump();
-    }
-
 }
