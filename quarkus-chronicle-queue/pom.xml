@@ -55,10 +55,36 @@
         </plugins>
     </build>
 
+    <profiles>
+        <profile>
+            <id>java17</id>
+            <activation>
+                <jdk>[17,</jdk>
+            </activation>
+            <properties>
+                <!-- Required JVM args for Java 17+ -->
+                <jvm.requiredArgs>
+                    --illegal-access=permit
+                    --add-exports java.base/jdk.internal.ref=ALL-UNNAMED
+                    --add-exports=java.base/sun.nio.ch=ALL-UNNAMED
+                    --add-exports=jdk.unsupported/sun.misc=ALL-UNNAMED
+                    --add-exports=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED
+                    --add-opens=jdk.compiler/com.sun.tools.javac=ALL-UNNAMED
+                    --add-exports=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED
+                    --add-opens=java.base/java.lang=ALL-UNNAMED
+                    --add-opens=java.base/java.lang.reflect=ALL-UNNAMED
+                    --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED
+                    --add-exports java.base/jdk.internal.util=ALL-UNNAMED
+                    --add-exports java.base/jdk.internal.misc=ALL-UNNAMED
+                </jvm.requiredArgs>
+            </properties>
+        </profile>
+    </profiles>
+
     <properties>
         <quarkus.version>2.7.0.Final</quarkus.version>
-        <maven.compiler.source>16</maven.compiler.source>
-        <maven.compiler.target>16</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
