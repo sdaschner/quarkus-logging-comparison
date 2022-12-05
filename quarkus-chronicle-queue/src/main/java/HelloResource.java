@@ -1,3 +1,7 @@
+import net.openhft.chronicle.bytes.Bytes;
+import net.openhft.chronicle.queue.ExcerptAppender;
+import net.openhft.chronicle.wire.DocumentContext;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
@@ -13,8 +17,17 @@ public class HelloResource {
     @GET
     public String hello() {
         int counter = 0;
-        for (; counter < 1_000; counter++) {
-            logger.log(Logger.Context.HELLO_METHOD, counter);
+        ExcerptAppender appender = logger.appender();
+        try (DocumentContext dc = appender.writingDocument()) {
+            final Bytes<?> bytes = dc.wire().bytes();
+
+            for (; counter < 1_000; counter++) {
+
+                bytes.writeUnsignedShort(Logger.Context.HELLO_METHOD.ordinal())
+                        .writeInt(counter);
+            }
+
+//            logger.log(Logger.Context.HELLO_METHOD, counter);
         }
         return String.valueOf(counter);
     }
