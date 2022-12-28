@@ -17,7 +17,7 @@ public class JournalConsumer implements EventHandler<Logger.Event> {
 
     @PostConstruct
     void init() throws IOException {
-        channel = FileChannel.open(Files.createTempFile("quarkus-log-", ".log"), StandardOpenOption.APPEND);
+        channel = FileChannel.open(Files.createTempFile("quarkus-disruptor-buffer-log-", ".log"), StandardOpenOption.APPEND);
         bb = ByteBuffer.allocate(6 * 4096);
     }
 

@@ -17,17 +17,11 @@ public class HelloResource {
     @GET
     public String hello() {
         int counter = 0;
-        ExcerptAppender appender = logger.appender();
-        try (DocumentContext dc = appender.writingDocument()) {
-            final Bytes<?> bytes = dc.wire().bytes();
 
+        try (Logger.Appender appender = logger.appender()) {
             for (; counter < 1_000; counter++) {
-
-                bytes.writeUnsignedShort(Logger.Context.HELLO_METHOD.ordinal())
-                        .writeInt(counter);
+                appender.log(Logger.Context.HELLO_METHOD, counter);
             }
-
-//            logger.log(Logger.Context.HELLO_METHOD, counter);
         }
         return String.valueOf(counter);
     }

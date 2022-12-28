@@ -20,7 +20,7 @@ public class Logger {
 
     @PostConstruct
     void init() throws IOException {
-        path = Files.createTempFile("quarkus-log-", ".log");
+        path = Files.createTempFile("quarkus-binary-writer-", ".log");
         channel = FileChannel.open(path, StandardOpenOption.APPEND);
         bb = ByteBuffer.allocate(6);
     }

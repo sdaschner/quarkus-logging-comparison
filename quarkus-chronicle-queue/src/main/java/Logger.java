@@ -1,4 +1,3 @@
-import io.quarkus.arc.Lock;
 import net.openhft.chronicle.bytes.Bytes;
 import net.openhft.chronicle.queue.ChronicleQueue;
 import net.openhft.chronicle.queue.ExcerptAppender;
@@ -9,78 +8,25 @@ import net.openhft.chronicle.wire.DocumentContext;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.nio.file.Files;
 
-/*
-creating queue at /tmp/chronicle-queue16448526988663616166
-Wrote 10,000,000 in 1.049 seconds.
-Wrote 10,000,000 in 0.902 seconds.
-Wrote 10,000,000 in 0.889 seconds.
-Wrote 10,000,000 in 0.890 seconds.
-Wrote 10,000,000 in 0.889 seconds.
- */
 @ApplicationScoped
 public class Logger {
 
     private ChronicleQueue queue;
-    private ByteBuffer bb;
-
-    public static void main(String[] args) throws IOException {
-        Logger logger = new Logger();
-        logger.init();
-        HelloResource hr = new HelloResource();
-        hr.logger = logger;
-
-        for (int t = 0; t < 5; t++) {
-            long start = System.currentTimeMillis();
-            int count = 10_000_000;
-            for (int i = 0; i < count; i += 1000) {
-                String wrote = hr.hello();
-//                System.out.println("Wrote: " + wrote);
-            }
-            long time = System.currentTimeMillis() - start;
-            System.out.printf("Wrote %,d in %.3f seconds.%n", count, time / 1e3);
-        }
-
-        logger.close();
-    }
 
     @PostConstruct
     void init() throws IOException {
         File basePath = Files.createTempDirectory("chronicle-queue").toFile();
         System.out.println("creating queue at " + basePath);
         queue = SingleChronicleQueueBuilder.binary(basePath).build();
-
-        bb = ByteBuffer.allocate(6 * 4096);
     }
 
-    public ExcerptAppender appender() {
-        return queue.acquireAppender();
-    }
-
-    @Lock
-    public void log(Context context, int count) {
-        bb.putShort((short) context.ordinal());
-        bb.putInt(count);
-
-        if (!bb.hasRemaining())
-            writeLog();
-    }
-
-    private void writeLog() {
-        bb.flip();
-        while (bb.hasRemaining()) {
-            ExcerptAppender appender = queue.acquireAppender();
-            try (DocumentContext dc = appender.writingDocument()) {
-                final Bytes<?> bytes = dc.wire().bytes();
-                bytes.writeUnsignedShort(bb.getShort())
-                        .writeInt(bb.getInt());
-            }
-        }
-        bb.clear();
+    public Appender appender() {
+        return new Appender(queue.acquireAppender());
     }
 
     public String dump() {
@@ -91,12 +37,13 @@ public class Logger {
                 if (!dc.isPresent())
                     break;
                 final Bytes<?> bytes = dc.wire().bytes();
-                builder
-                        .append(Context.values()[bytes.readUnsignedShort()])
-                        .append(':')
-                        .append(bytes.readInt())
-                        .append('\n');
-
+                while (bytes.readRemaining() > 0) {
+                    builder
+                            .append(Context.values()[bytes.readUnsignedShort()])
+                            .append(':')
+                            .append(bytes.readInt())
+                            .append('\n');
+                }
             }
         }
         return builder.toString();
@@ -107,7 +54,28 @@ public class Logger {
         queue.close();
     }
 
+    public static class Appender implements Closeable {
+
+        private final DocumentContext documentContext;
+
+        private Appender(ExcerptAppender appender) {
+            documentContext = appender.writingDocument();
+        }
+
+        public void log(Context context, int count) {
+            documentContext.wire().bytes()
+                    .writeUnsignedShort(context.ordinal())
+                    .writeInt(count);
+        }
+
+        @Override
+        public void close() {
+            documentContext.close();
+        }
+    }
+
     public enum Context {
         MAIN, TEST, HELLO_METHOD, GOODBYE_METHOD
     }
+
 }
