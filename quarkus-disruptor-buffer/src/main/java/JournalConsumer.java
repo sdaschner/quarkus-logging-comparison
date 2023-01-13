@@ -18,11 +18,12 @@ public class JournalConsumer implements EventHandler<Logger.Event> {
     @PostConstruct
     void init() throws IOException {
         channel = FileChannel.open(Files.createTempFile("quarkus-disruptor-buffer-log-", ".log"), StandardOpenOption.APPEND);
-        bb = ByteBuffer.allocate(6 * 4096);
+        bb = ByteBuffer.allocate(14 * 4096);
     }
 
     @Override
     public void onEvent(Logger.Event event, long sequence, boolean endOfBatch) throws IOException {
+        bb.putLong(System.currentTimeMillis());
         bb.putShort((short) event.context.ordinal());
         bb.putInt(event.count);
 

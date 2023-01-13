@@ -22,13 +22,14 @@ public class Logger {
     void init() throws IOException {
         path = Files.createTempFile("quarkus-binary-writer-buffer-log-", ".log");
         channel = FileChannel.open(path, StandardOpenOption.APPEND);
-        bb = ByteBuffer.allocate(6 * 4096);
+        bb = ByteBuffer.allocate(14 * 4096);
         bb.clear();
     }
 
     @Lock
     public void log(Context context, int count) {
         try {
+            bb.putLong(System.currentTimeMillis());
             bb.putShort((short) context.ordinal());
             bb.putInt(count);
 

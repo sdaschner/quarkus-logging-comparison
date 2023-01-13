@@ -39,6 +39,8 @@ public class Logger {
                 final Bytes<?> bytes = dc.wire().bytes();
                 while (bytes.readRemaining() > 0) {
                     builder
+                            .append(bytes.readLong())
+                            .append(':')
                             .append(Context.values()[bytes.readUnsignedShort()])
                             .append(':')
                             .append(bytes.readInt())
@@ -64,6 +66,7 @@ public class Logger {
 
         public void log(Context context, int count) {
             documentContext.wire().bytes()
+                    .writeLong(System.currentTimeMillis())
                     .writeUnsignedShort(context.ordinal())
                     .writeInt(count);
         }

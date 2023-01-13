@@ -5,7 +5,6 @@ Comparison of different ways to implement binary audit logging in a Quarkus appl
 - Binary File Writer
 - Binary Buffered File Writer
 - LMAX Disruptor
-- LMAX Disruptor With File Buffer
 - Chronicle Queue
 
 The text-based pendant can be found https://github.com/sdaschner/quarkus-logging-comparison[here^].
